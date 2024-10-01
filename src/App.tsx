@@ -4,11 +4,13 @@ import Home from "./routes/Home";
 import Profile from "./routes/Profile";
 import Login from "./routes/Login";
 import CreateAccount from "./routes/CreateAccount";
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import { useEffect, useState } from "react";
 import LoadingScreen from "./components/LoadingScreen";
 import { auth } from "./firebase";
+import ProtectedRoute from "./components/Protected-route";
+import ResetPassword from "./routes/ResetPassword";
 
 const GlobalStyle = createGlobalStyle`
 ${reset};
@@ -26,7 +28,11 @@ body {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "",
@@ -46,7 +52,17 @@ const router = createBrowserRouter([
     path: "/create-account",
     element: <CreateAccount />,
   },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
+  },
 ]);
+
+const Wrapper = styled.div`
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+`;
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -60,7 +76,9 @@ function App() {
   return (
     <>
       <GlobalStyle />
-      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
+      <Wrapper>
+        {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
+      </Wrapper>
     </>
   );
 }
